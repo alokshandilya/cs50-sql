@@ -31,4 +31,24 @@
   - `GROUP BY` is used with aggregate functions to group the result-set by one or more columns
 - `HAVING` - used to filter the result-set groups that have the specified condition, eg:
   - `SELECT "column1", "column2", COUNT("column3") FROM "table" GROUP BY "column1", "column2" HAVING COUNT("column3") > 1;`
-  - `HAVING` is used with aggregate functions to filter the result-set groups that have the specified condition
+  - `HAVING` is used instead of `WHERE` with aggregate functions
+    - `WHERE` is used before `GROUP BY`, `HAVING` is used after `GROUP BY`
+    - `WHERE` clause filters individual rows before grouping
+    - `HAVING` clause filters grouped data after aggregation
+- **Execution Order**:
+  - The clauses are applied in a specific sequence:
+    - **WHERE** clause (filters individual rows)
+    - **GROUP BY** clause (groups rows)
+    - **HAVING** clause (filters grouped data)
+- eg:
+
+```sql
+-- WHERE clause (filters before grouping)
+SELECT * FROM BOOKS WHERE PRICE > 350;
+
+-- HAVING clause (filters after grouping)
+SELECT COUNT(BOOK_ID), LANGUAGE 
+FROM BOOKS 
+GROUP BY LANGUAGE 
+HAVING COUNT(LANGUAGE) > 1;
+```

@@ -38,5 +38,6 @@
   - `AVG()` - returns the average value of a numeric column
   - `MIN()` - returns the smallest value of a numeric column
   - `MAX()` - returns the largest value of a numeric column
+  - `LENGTH()` - returns the length of a string
 - `AS` - is used to rename a column or table
 
