@@ -153,3 +153,215 @@ An **outer join** includes rows even if there is no match in one of the tables. 
 ### Conclusion
 - **Inner Joins:** `INNER JOIN (JOIN)`, `NATURAL JOIN`.
 - **Outer Joins:** `LEFT JOIN`, `RIGHT JOIN`, `FULL JOIN`.
+
+## GROUP BY
+
+The `GROUP BY` clause in SQL is used to group rows that have the same values in specified columns into summary rows. It is often used with aggregate functions like `COUNT()`, `SUM()`, `AVG()`, `MAX()`, and `MIN()` to perform calculations on each group of rows.
+
+### **Key Points about `GROUP BY`:**
+1. **Purpose:** It groups rows that share the same values in one or more columns.
+2. **Aggregate Functions:** Used with aggregate functions to calculate summary statistics for each group.
+3. **Common Use Cases:**
+   - Counting occurrences.
+   - Calculating totals, averages, or maximum/minimum values.
+   - Summarizing data by categories.
+
+---
+
+### **Practical Example 1: Using `GROUP BY` Alone**
+
+#### Scenario:
+You have a table called `Orders` that contains information about customer orders. You want to find out how many orders each customer has placed.
+
+#### Table: `Orders`
+| order_id | customer_id | order_date | amount |
+|----------|-------------|------------|--------|
+| 1        | 101         | 2023-01-01 | 150    |
+| 2        | 102         | 2023-01-02 | 200    |
+| 3        | 101         | 2023-01-03 | 300    |
+| 4        | 103         | 2023-01-04 | 100    |
+| 5        | 102         | 2023-01-05 | 250    |
+
+#### Query:
+```sql
+SELECT customer_id, COUNT(*) AS total_orders
+FROM Orders
+GROUP BY customer_id;
+```
+
+#### Explanation:
+- The `GROUP BY customer_id` groups the rows by each unique `customer_id`.
+- The `COUNT(*)` function counts the number of orders for each customer.
+
+#### Result:
+| customer_id | total_orders |
+|-------------|--------------|
+| 101         | 2            |
+| 102         | 2            |
+| 103         | 1            |
+
+---
+
+### **Practical Example 2: Using `GROUP BY` with Aggregate Functions**
+
+#### Scenario:
+You want to calculate the total amount spent by each customer.
+
+#### Query:
+```sql
+SELECT customer_id, SUM(amount) AS total_spent
+FROM Orders
+GROUP BY customer_id;
+```
+
+#### Explanation:
+- The `GROUP BY customer_id` groups the rows by each unique `customer_id`.
+- The `SUM(amount)` function calculates the total amount spent by each customer.
+
+#### Result:
+| customer_id | total_spent |
+|-------------|-------------|
+| 101         | 450         |
+| 102         | 450         |
+| 103         | 100         |
+
+---
+
+### **Practical Example 3: Using `GROUP BY` with Joins**
+
+#### Scenario:
+You have two tables:
+1. **`Customers`**: Contains customer details.
+2. **`Orders`**: Contains order details.
+
+You want to find out how much each customer has spent in total.
+
+#### Tables:
+
+**Customers**
+| customer_id | name      |
+|-------------|-----------|
+| 101         | Alice     |
+| 102         | Bob       |
+| 103         | Carol     |
+
+**Orders**
+| order_id | customer_id | amount |
+|----------|-------------|--------|
+| 1        | 101         | 150    |
+| 2        | 102         | 200    |
+| 3        | 101         | 300    |
+| 4        | 103         | 100    |
+| 5        | 102         | 250    |
+
+#### Query:
+```sql
+SELECT c.name, SUM(o.amount) AS total_spent
+FROM Customers c
+JOIN Orders o ON c.customer_id = o.customer_id
+GROUP BY c.name;
+```
+
+#### Explanation:
+- The `JOIN` combines the `Customers` and `Orders` tables based on the `customer_id`.
+- The `GROUP BY c.name` groups the rows by each customer's name.
+- The `SUM(o.amount)` calculates the total amount spent by each customer.
+
+#### Result:
+| name   | total_spent |
+|--------|-------------|
+| Alice  | 450         |
+| Bob    | 450         |
+| Carol  | 100         |
+
+---
+
+### **Practical Example 4: Using `GROUP BY` with Multiple Columns**
+
+#### Scenario:
+You want to find out how much each customer has spent in each year.
+
+#### Query:
+```sql
+SELECT customer_id, YEAR(order_date) AS order_year, SUM(amount) AS total_spent
+FROM Orders
+GROUP BY customer_id, YEAR(order_date);
+```
+
+#### Explanation:
+- The `GROUP BY customer_id, YEAR(order_date)` groups the rows by both `customer_id` and the year extracted from the `order_date`.
+- The `SUM(amount)` calculates the total amount spent by each customer in each year.
+
+#### Result:
+| customer_id | order_year | total_spent |
+|-------------|------------|-------------|
+| 101         | 2023       | 450         |
+| 102         | 2023       | 450         |
+| 103         | 2023       | 100         |
+
+---
+
+### **Practical Example 5: Using `GROUP BY` with `HAVING`**
+
+#### Scenario:
+You want to find customers who have spent more than $200 in total.
+
+#### Query:
+```sql
+SELECT customer_id, SUM(amount) AS total_spent
+FROM Orders
+GROUP BY customer_id
+HAVING SUM(amount) > 200;
+```
+
+#### Explanation:
+- The `GROUP BY customer_id` groups the rows by each unique `customer_id`.
+- The `SUM(amount)` calculates the total amount spent by each customer.
+- The `HAVING` clause filters the grouped results to include only customers whose total spending exceeds $200.
+
+#### Result:
+| customer_id | total_spent |
+|-------------|-------------|
+| 101         | 450         |
+| 102         | 450         |
+
+---
+
+### **Practical Example 6: Using `GROUP BY` with Joins and `HAVING`**
+
+#### Scenario:
+You want to find customers who have placed more than one order.
+
+#### Query:
+```sql
+SELECT c.name, COUNT(o.order_id) AS total_orders
+FROM Customers c
+JOIN Orders o ON c.customer_id = o.customer_id
+GROUP BY c.name
+HAVING COUNT(o.order_id) > 1;
+```
+
+#### Explanation:
+- The `JOIN` combines the `Customers` and `Orders` tables based on the `customer_id`.
+- The `GROUP BY c.name` groups the rows by each customer's name.
+- The `COUNT(o.order_id)` counts the number of orders placed by each customer.
+- The `HAVING` clause filters the grouped results to include only customers with more than one order.
+
+#### Result:
+| name   | total_orders |
+|--------|--------------|
+| Alice  | 2            |
+| Bob    | 2            |
+
+---
+
+### **Key Takeaways:**
+1. **`GROUP BY`** is used to group rows that share the same values in specified columns.
+2. **Aggregate Functions** like `COUNT()`, `SUM()`, `AVG()`, etc., are often used with `GROUP BY` to calculate summary statistics for each group.
+3. **Joins** can be combined with `GROUP BY` to summarize data across multiple tables.
+4. The **`HAVING` clause** is used to filter grouped results, similar to how `WHERE` filters individual rows.
+
+---
+
+### **Final Answer:**
+**`GROUP BY` is a powerful tool for summarizing data by grouping rows based on specific columns. It can be used alone or with joins, aggregate functions, and filtering conditions (`HAVING`) to produce meaningful insights from your data.**
