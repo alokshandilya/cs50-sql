@@ -40,4 +40,3 @@
   - `MAX()` - returns the largest value of a numeric column
   - `LENGTH()` - returns the length of a string
 - `AS` - is used to rename a column or table
-

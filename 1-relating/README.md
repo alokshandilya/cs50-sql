@@ -40,7 +40,6 @@
     - **WHERE** clause (filters individual rows)
     - **GROUP BY** clause (groups rows)
     - **HAVING** clause (filters grouped data)
-- eg:
 
 ```sql
 -- WHERE clause (filters before grouping)
@@ -52,3 +51,105 @@ FROM BOOKS
 GROUP BY LANGUAGE 
 HAVING COUNT(LANGUAGE) > 1;
 ```
+
+## Joins
+
+### **1. Inner Joins**
+An **inner join** returns only the rows that have matching values in both tables. Rows that do not have a match in either table are excluded from the result.
+
+#### Types of Inner Joins:
+- **`INNER JOIN`:**
+  - Explicitly specifies an inner join.
+  - Returns only rows where there is a match between the joined tables.
+  
+  ```sql
+  SELECT *
+  FROM TableA a
+  INNER JOIN TableB b ON a.key = b.key;
+  ```
+
+- **`NATURAL JOIN`:**
+  - Automatically performs an inner join based on columns with the same name in both tables.
+  - Only includes rows where there is a match between the tables.
+  
+  ```sql
+  SELECT *
+  FROM TableA
+  NATURAL JOIN TableB;
+  ```
+
+- **`CROSS JOIN`:**
+  - Produces a Cartesian product of the two tables (all possible combinations of rows).
+  - While technically not an "inner join," it is often grouped with inner joins because it doesn't involve filtering by matching rows.
+  
+  ```sql
+  SELECT *
+  FROM TableA
+  CROSS JOIN TableB;
+  ```
+
+---
+
+### **2. Outer Joins**
+An **outer join** includes rows even if there is no match in one of the tables. It preserves unmatched rows from one or both tables, depending on the type of outer join.
+
+#### Types of Outer Joins:
+- **`LEFT OUTER JOIN` (or `LEFT JOIN`):**
+  - Includes all rows from the left table (`TableA`) and matching rows from the right table (`TableB`).
+  - If there is no match, the result will contain `NULL` for columns from the right table.
+  
+  ```sql
+  SELECT *
+  FROM TableA a
+  LEFT JOIN TableB b ON a.key = b.key;
+  ```
+
+- **`RIGHT OUTER JOIN` (or `RIGHT JOIN`):**
+  - Includes all rows from the right table (`TableB`) and matching rows from the left table (`TableA`).
+  - If there is no match, the result will contain `NULL` for columns from the left table.
+  
+  ```sql
+  SELECT *
+  FROM TableA a
+  RIGHT JOIN TableB b ON a.key = b.key;
+  ```
+
+- **`FULL OUTER JOIN` (or `FULL JOIN`):**
+  - Includes all rows from both tables.
+  - If there is no match, the result will contain `NULL` for columns from the table that lacks a match.
+  
+  ```sql
+  SELECT *
+  FROM TableA a
+  FULL OUTER JOIN TableB b ON a.key = b.key;
+  ```
+
+---
+
+### **Summary Table**
+
+| Join Type          | Description                                                                                     | Includes Unmatched Rows? |
+|--------------------|-------------------------------------------------------------------------------------------------|--------------------------|
+| **`INNER JOIN`**   | Returns only rows with matching keys in both tables.                                           | No                       |
+| **`NATURAL JOIN`** | Performs an inner join based on columns with the same name in both tables.                      | No                       |
+| **`CROSS JOIN`**   | Produces a Cartesian product of the two tables.                                                | N/A                      |
+| **`LEFT JOIN`**    | Includes all rows from the left table and matching rows from the right table.                   | Yes (from left table)    |
+| **`RIGHT JOIN`**   | Includes all rows from the right table and matching rows from the left table.                   | Yes (from right table)   |
+| **`FULL JOIN`**    | Includes all rows from both tables, filling in `NULL` where there is no match.                  | Yes (from both tables)   |
+
+---
+
+### **Key Points to Remember**
+1. **Inner Joins** exclude unmatched rows.
+   - Examples: `INNER JOIN`, `NATURAL JOIN`.
+
+2. **Outer Joins** include unmatched rows.
+   - Examples: `LEFT JOIN`, `RIGHT JOIN`, `FULL JOIN`.
+
+3. **`CROSS JOIN`** is neither inner nor outer—it produces all possible combinations of rows.
+
+4. If you want to include rows with no match, use an **outer join** (`LEFT`, `RIGHT`, or `FULL`).
+
+### Conclusion
+- **Inner Joins:** `INNER JOIN (JOIN)`, `NATURAL JOIN`.
+- **Outer Joins:** `LEFT JOIN`, `RIGHT JOIN`, `FULL JOIN`.
